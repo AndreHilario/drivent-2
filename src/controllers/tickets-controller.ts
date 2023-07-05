@@ -29,7 +29,7 @@ export async function getTickets(req: AuthenticatedRequest, res: Response) {
 }
 
 export async function postTickets(req: AuthenticatedRequest, res: Response) {
-    const data = req.body as CreateTicket;
+    const data = req.body.data as CreateTicket;
     const userId = req.userId;
     try {
         const response = await ticketService.createTicket(data, userId);

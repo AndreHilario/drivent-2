@@ -46,43 +46,41 @@ export async function getUserTicket(userId: number): Promise<TicketWithTicketTyp
 }
 
 export async function createTicket(data: CreateTicket, userId: number) {
-  const createdTicket = await repositoryTicket.createTicketPrisma(data, userId);
+  await repositoryTicket.createTicketPrisma(data, userId);
 
-  if (createdTicket) {
-    const result = await repositoryTicket.getUserTicketPrisma(userId);
 
-    if (!result) {
-      throw notFoundError(); // Retorna status 404 se o usuário não tem matrícula
-    }
+  const result = await repositoryTicket.getUserTicketPrisma(userId);
 
-    const { id, status, ticketTypeId, enrollmentId, createdAt, updatedAt, TicketType } = result;
-
-    if (!TicketType) {
-      throw notFoundError(); // Retorna status 404 se o tipo de ingresso não existe
-    }
-
-    const ticketType: TicketType = {
-      id: TicketType.id,
-      name: TicketType.name,
-      price: TicketType.price,
-      isRemote: TicketType.isRemote,
-      includesHotel: TicketType.includesHotel,
-      createdAt: TicketType.createdAt,
-      updatedAt: TicketType.updatedAt,
-    };
-
-    const ticketWithTicketType: TicketWithTicketType = {
-      id: id,
-      status,
-      ticketTypeId,
-      enrollmentId,
-      TicketType: ticketType,
-      createdAt,
-      updatedAt,
-    };
-
-    return ticketWithTicketType;
-  } else {
-    throw requestError(httpStatus.BAD_REQUEST, ""); // Retorna status 400 se não foi possível criar o ingresso
+  if (!result) {
+    throw notFoundError(); // Retorna status 404 se o usuário não tem matrícula
   }
+
+  const { id, status, ticketTypeId, enrollmentId, createdAt, updatedAt, TicketType } = result;
+
+  if (!TicketType) {
+    throw notFoundError(); // Retorna status 404 se o tipo de ingresso não existe
+  }
+
+  const ticketType: TicketType = {
+    id: TicketType.id,
+    name: TicketType.name,
+    price: TicketType.price,
+    isRemote: TicketType.isRemote,
+    includesHotel: TicketType.includesHotel,
+    createdAt: TicketType.createdAt,
+    updatedAt: TicketType.updatedAt,
+  };
+
+  const ticketWithTicketType: TicketWithTicketType = {
+    id: id,
+    status,
+    ticketTypeId,
+    enrollmentId,
+    TicketType: ticketType,
+    createdAt,
+    updatedAt,
+  };
+
+  return ticketWithTicketType;
+
 }
