@@ -2,7 +2,7 @@ import { AuthenticatedRequest } from "@/middlewares";
 import { Response, Request } from "express";
 import * as ticketService from "../services/tickets-service/index"
 import httpStatus from "http-status";
-import { CreateTicket, TicketWithTicketType } from "@prisma/client";
+import { CreateTicket } from "@prisma/client";
 
 export async function getTicketsTypes(req: Request, res: Response) {
     try {
@@ -35,8 +35,6 @@ export async function postTickets(req: AuthenticatedRequest, res: Response) {
         const response = await ticketService.createTicket(data, userId);
         return res.status(httpStatus.CREATED).send(response);
     } catch (error) {
-        console.log(error); // Exibir o erro no console para depuração
-
         if (error.name === "NotFoundError") {
             return res.status(httpStatus.NOT_FOUND).send({
                 message: error.message,
