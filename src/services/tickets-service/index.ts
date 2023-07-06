@@ -1,10 +1,9 @@
-import { notFoundError, requestError } from "@/errors";
-import * as repositoryTicket from "@/repositories/tickets-repository";
-import enrollmentRepository from "@/repositories/enrollment-repository";
-import { CreateTicket, TicketType, TicketWithTicketType } from "@prisma/client";
+import { CreateTicket, TicketType, TicketWithTicketType } from '@prisma/client';
+import { notFoundError } from '@/errors';
+import * as repositoryTicket from '@/repositories/tickets-repository';
+import enrollmentRepository from '@/repositories/enrollment-repository';
 
 export async function getAllTicketsByType() {
-
   const result = await repositoryTicket.getTicketsPrisma();
   return result;
 }
