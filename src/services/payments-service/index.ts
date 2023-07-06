@@ -12,10 +12,6 @@ export async function getPayment(ticketId: number, userId: number) {
 
     const ticket = await repositoryTicket.getUserTicketPrisma(userId);
     if (ticket) {
-        if (ticket.Enrollment.userId !== userId) {
-            throw unauthorizedError();
-        }
-
         if (ticket.id !== ticketId) {
             throw notFoundError();
         }
@@ -30,12 +26,15 @@ export async function getPayment(ticketId: number, userId: number) {
 export async function realizePayment(data: PaymentBody, userId: number) {
     const ticket = await repositoryTicket.getUserTicketPrisma(userId);
     if (!ticket) {
-        return notFoundError();
+        throw notFoundError();
     }
     await repositoryPayment.createPaymentPrisma(data);
     await repositoryPayment.updateStatus(userId);
 
     const payment = await repositoryPayment.getPaymentsByTicketIdPrisma(data.ticketId);
+    if (!payment) {
+        throw notFoundError();
+    }
 
     const paymentInfo: Payment = {
         id: payment.id,
