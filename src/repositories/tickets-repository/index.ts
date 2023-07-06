@@ -20,14 +20,15 @@ export async function getUserTicketPrisma(userId: number): Promise<TicketWithTic
     return userTicket;
 }
 
-export async function createTicketPrisma(data: CreateTicket, userId: number) {
-    const ticketTypeId = data.ticketTypeId;
+export async function createTicketPrisma(data: CreateTicket, enrollmentId: number) {
+    const ticketTypeId: number = data.ticketTypeId;
 
     return prisma.ticket.create({
         data: {
             ticketTypeId: ticketTypeId,
-            enrollmentId: userId,
-            status: "RESERVED",
-        },
+            enrollmentId: enrollmentId,
+            status: 'RESERVED',
+        }
     });
 }
+

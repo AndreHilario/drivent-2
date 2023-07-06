@@ -1,7 +1,9 @@
 import { notFoundError, requestError } from "@/errors";
 import * as repositoryTicket from "@/repositories/tickets-repository";
+import enrollmentRepository from "@/repositories/enrollment-repository";
 import { CreateTicket, TicketType, TicketWithTicketType } from "@prisma/client";
 import httpStatus from "http-status";
+import { number } from "joi";
 
 export async function getAllTicketsByType() {
 
@@ -46,19 +48,23 @@ export async function getUserTicket(userId: number): Promise<TicketWithTicketTyp
 }
 
 export async function createTicket(data: CreateTicket, userId: number) {
-  await repositoryTicket.createTicketPrisma(data, userId);
+  const ticket = await repositoryTicket.getUserTicketPrisma(userId);
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
 
-
-  const result = await repositoryTicket.getUserTicketPrisma(userId);
-
-  if (!result) {
-    throw notFoundError(); // Retorna status 404 se o usuário não tem matrícula
+  if (!enrollment) {
+    throw notFoundError(); // Lançar o erro correto quando não houver matrícula
   }
 
-  const { id, status, ticketTypeId, enrollmentId, createdAt, updatedAt, TicketType } = result;
+  await repositoryTicket.createTicketPrisma(data, enrollment.id);
+
+  if (!ticket) {
+    throw notFoundError();
+  }
+
+  const { id, status, ticketTypeId, enrollmentId, createdAt, updatedAt, TicketType } = ticket;
 
   if (!TicketType) {
-    throw notFoundError(); // Retorna status 404 se o tipo de ingresso não existe
+    throw requestError(httpStatus.BAD_REQUEST, "");
   }
 
   const ticketType: TicketType = {
@@ -72,7 +78,7 @@ export async function createTicket(data: CreateTicket, userId: number) {
   };
 
   const ticketWithTicketType: TicketWithTicketType = {
-    id: id,
+    id,
     status,
     ticketTypeId,
     enrollmentId,
@@ -82,5 +88,4 @@ export async function createTicket(data: CreateTicket, userId: number) {
   };
 
   return ticketWithTicketType;
-
 }

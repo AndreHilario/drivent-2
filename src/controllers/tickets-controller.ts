@@ -29,14 +29,28 @@ export async function getTickets(req: AuthenticatedRequest, res: Response) {
 }
 
 export async function postTickets(req: AuthenticatedRequest, res: Response) {
-    const data = req.body.data as CreateTicket;
+    const data = req.body as CreateTicket;
     const userId = req.userId;
     try {
         const response = await ticketService.createTicket(data, userId);
         return res.status(httpStatus.CREATED).send(response);
     } catch (error) {
-        if (error.name === "RequestError") return res.status(httpStatus.BAD_REQUEST).send(error.message);
-        else if (error.name === "NotFoundError") return res.status(httpStatus.NOT_FOUND).send(error.message);
-        else return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error.message);
+        console.log(error); // Exibir o erro no console para depuração
+
+        if (error.name === "NotFoundError") {
+            return res.status(httpStatus.NOT_FOUND).send({
+                message: error.message,
+            });
+        }
+        if (error.name === "RequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send({
+                message: error.message,
+            });
+        }
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+            error: "InternalServerError",
+            message: "Internal Server Error",
+        });
     }
+
 }
