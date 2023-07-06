@@ -54,6 +54,7 @@ async function searchAndReturnTicket(userId: number): Promise<TicketWithTicketTy
     TicketType: ticketType,
     createdAt,
     updatedAt,
+    Enrollment: null
   };
 
   return ticketWithTicketType;

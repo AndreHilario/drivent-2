@@ -1,5 +1,5 @@
 import { prisma } from '@/config';
-import { CreateTicket, TicketWithTicketType } from '@prisma/client';
+import { CreateTicket, PaymentBody, TicketWithTicketType } from '@prisma/client';
 
 export async function getTicketsPrisma() {
     return prisma.ticketType.findMany();
@@ -14,6 +14,7 @@ export async function getUserTicketPrisma(userId: number): Promise<TicketWithTic
         },
         include: {
             TicketType: true,
+            Enrollment: true,
         },
     });
 

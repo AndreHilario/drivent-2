@@ -1,4 +1,4 @@
-import { AuthenticatedRequest, validateParams } from "@/middlewares";
+import { AuthenticatedRequest } from "@/middlewares";
 import { getPayment, realizePayment } from "@/services/payments-service";
 import { PaymentBody } from "@prisma/client";
 import { Response } from "express";
@@ -35,11 +35,21 @@ export async function getPaymentsByTicketId(req: AuthenticatedRequest, res: Resp
 }
 
 export async function createPaymentSucess(req: AuthenticatedRequest, res: Response) {
-    const data = req.body.data as PaymentBody;
+    const data = req.body as PaymentBody;
+    console.log(data, "data")
+    const userId = req.userId;
     try {
-        const response = await realizePayment(data);
+        const response = await realizePayment(data, userId);
         return res.status(httpStatus.OK).send(response);
     } catch (error) {
-
+        if (error.name === "NotFoundError") {
+            return res.status(httpStatus.NOT_FOUND).send({
+                message: error.message,
+            });
+        }
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+            error: "InternalServerError",
+            message: "Internal Server Error",
+        });
     }
 }
