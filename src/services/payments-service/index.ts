@@ -1,11 +1,10 @@
 import { Payment, PaymentBody } from '@prisma/client';
 import httpStatus from 'http-status';
 import { notFoundError, requestError, unauthorizedError } from '@/errors';
-import { getPaymentsByTicketIdPrisma } from '@/repositories/payments-repository';
 import * as repositoryTicket from '@/repositories/tickets-repository';
 import * as repositoryPayment from '@/repositories/payments-repository';
 
-export async function getPayment(ticketId: number, userId: number) {
+export async function getPayment(ticketId: number, userId: number): Promise<Payment> {
   if (!ticketId) {
     throw requestError(httpStatus.BAD_REQUEST, 'Missing ticketId');
   }
@@ -19,11 +18,10 @@ export async function getPayment(ticketId: number, userId: number) {
     throw unauthorizedError();
   }
 
-  const result = await getPaymentsByTicketIdPrisma(ticketId);
-  return result;
+  return await repositoryPayment.getPaymentsByTicketIdPrisma(ticketId);
 }
 
-export async function realizePayment(data: PaymentBody, userId: number) {
+export async function realizePayment(data: PaymentBody, userId: number): Promise<Payment> {
   const ticket = await repositoryTicket.validateTicket(data.ticketId);
   if (!ticket) {
     throw notFoundError();
@@ -45,7 +43,7 @@ export async function realizePayment(data: PaymentBody, userId: number) {
     throw notFoundError();
   }
 
-  const paymentInfo: Payment = {
+  return {
     id: payment.id,
     ticketId: payment.ticketId,
     value: payment.value,
@@ -54,6 +52,4 @@ export async function realizePayment(data: PaymentBody, userId: number) {
     createdAt: payment.createdAt,
     updatedAt: payment.updatedAt,
   };
-
-  return paymentInfo;
 }

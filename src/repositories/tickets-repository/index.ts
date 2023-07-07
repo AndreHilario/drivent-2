@@ -34,11 +34,9 @@ export async function createTicketPrisma(data: CreateTicket, enrollmentId: numbe
 }
 
 export async function validateTicket(ticketId: number): Promise<Ticket | null> {
-  const ticket = await prisma.ticket.findUnique({
+  return await prisma.ticket.findUnique({
     where: {
       id: ticketId,
     },
   });
-
-  return ticket;
 }
