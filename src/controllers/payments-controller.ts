@@ -7,18 +7,17 @@ import { AuthenticatedRequest } from '@/middlewares';
 export async function getPaymentsByTicketId(req: AuthenticatedRequest, res: Response) {
   const ticketId = req.query.ticketId as unknown as number;
   const userId = req.userId;
-
   try {
     const response = await getPayment(Number(ticketId), userId);
     return res.status(httpStatus.OK).send(response);
   } catch (error) {
-    if (error.name === 'NotFoundError') {
-      return res.status(httpStatus.NOT_FOUND).send({
+    if (error.name === 'UnauthorizedError') {
+      return res.status(httpStatus.UNAUTHORIZED).send({
         message: error.message,
       });
     }
-    if (error.name === 'UnauthorizedError') {
-      return res.status(httpStatus.UNAUTHORIZED).send({
+    if (error.name === 'NotFoundError') {
+      return res.status(httpStatus.NOT_FOUND).send({
         message: error.message,
       });
     }

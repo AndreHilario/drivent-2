@@ -9,14 +9,14 @@ export async function getPayment(ticketId: number, userId: number) {
   if (!ticketId) {
     throw requestError(httpStatus.BAD_REQUEST, 'Missing ticketId');
   }
-
-  const ticket = await repositoryTicket.getUserTicketPrisma(userId);
-  if (ticket) {
-    if (ticket.id !== ticketId) {
-      throw notFoundError();
-    }
-  } else if (!ticket) {
+  const ticket = await repositoryTicket.validateTicket(ticketId);
+  if (!ticket) {
     throw notFoundError();
+  }
+
+  const userTicket = await repositoryPayment.validateTicketUser(ticketId);
+  if (userTicket !== userId) {
+    throw unauthorizedError();
   }
 
   const result = await getPaymentsByTicketIdPrisma(ticketId);
@@ -24,16 +24,20 @@ export async function getPayment(ticketId: number, userId: number) {
 }
 
 export async function realizePayment(data: PaymentBody, userId: number) {
-  const ticket = await repositoryTicket.getUserTicketPrisma(userId);
+  const ticket = await repositoryTicket.validateTicket(data.ticketId);
   if (!ticket) {
     throw notFoundError();
   }
+
+  const userTicket = await repositoryPayment.validateTicketUser(data.ticketId);
+  if (userTicket !== userId) {
+    throw unauthorizedError();
+  }
+
   const price = await repositoryPayment.getPriceByTicketId(ticket.ticketTypeId);
-  if (price !== null) {
+  if (price) {
     await repositoryPayment.createPaymentPrisma(data, price);
     await repositoryPayment.updateStatus(userId);
-  } else {
-    throw unauthorizedError();
   }
 
   const payment = await repositoryPayment.getPaymentsByTicketIdPrisma(data.ticketId);

@@ -20,7 +20,7 @@ export async function createPaymentPrisma(data: PaymentBody, price: number): Pro
   });
 }
 
-export async function getPriceByTicketId(ticketId: number) {
+export async function getPriceByTicketId(ticketId: number): Promise<number | null> {
   const result = await prisma.ticketType.findUnique({
     where: {
       id: ticketId,
@@ -41,4 +41,17 @@ export async function updateStatus(userId: number) {
       status: 'PAID',
     },
   });
+}
+
+export async function validateTicketUser(ticketId: number): Promise<number> {
+  const userTicket = await prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+    },
+    include: {
+      Enrollment: true,
+    },
+  });
+
+  return userTicket?.Enrollment.userId;
 }
