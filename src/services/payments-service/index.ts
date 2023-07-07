@@ -18,7 +18,7 @@ export async function getPayment(ticketId: number, userId: number): Promise<Paym
     throw unauthorizedError();
   }
 
-  return await repositoryPayment.getPaymentsByTicketIdPrisma(ticketId);
+  return repositoryPayment.getPaymentsByTicketIdPrisma(ticketId);
 }
 
 export async function realizePayment(data: PaymentBody, userId: number): Promise<Payment> {
