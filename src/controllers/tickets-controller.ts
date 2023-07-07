@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import httpStatus from 'http-status';
-import { CreateTicket } from '@prisma/client';
+import { CreateTicket } from '@/protocols';
 import * as ticketService from '../services/tickets-service/index';
 import { AuthenticatedRequest } from '@/middlewares';
 

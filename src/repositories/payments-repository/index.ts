@@ -1,4 +1,5 @@
-import { Payment, PaymentBody } from '@prisma/client';
+import { Payment } from '@prisma/client';
+import { PaymentBody } from '@/protocols';
 import { prisma } from '@/config';
 
 export async function getPaymentsByTicketIdPrisma(ticketId: number): Promise<Payment | null> {

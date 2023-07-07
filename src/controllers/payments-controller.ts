@@ -1,4 +1,4 @@
-import { PaymentBody } from '@prisma/client';
+import { PaymentBody } from '@/protocols';
 import { Response } from 'express';
 import httpStatus from 'http-status';
 import { getPayment, realizePayment } from '@/services/payments-service';
