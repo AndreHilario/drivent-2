@@ -1,6 +1,6 @@
-import { PaymentBody } from '@/protocols';
 import { Response } from 'express';
 import httpStatus from 'http-status';
+import { PaymentBody } from '@/protocols';
 import { getPayment, realizePayment } from '@/services/payments-service';
 import { AuthenticatedRequest } from '@/middlewares';
 

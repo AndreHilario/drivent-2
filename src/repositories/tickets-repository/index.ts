@@ -1,5 +1,5 @@
 import { Ticket } from '@prisma/client';
-import { CreateTicket, TicketWithTicketType, } from '@/protocols';
+import { CreateTicket, TicketWithTicketType } from '@/protocols';
 import { prisma } from '@/config';
 
 export async function getTicketsPrisma() {

@@ -1,6 +1,6 @@
 import { Payment } from '@prisma/client';
-import { PaymentBody } from '@/protocols';
 import httpStatus from 'http-status';
+import { PaymentBody } from '@/protocols';
 import { notFoundError, requestError, unauthorizedError } from '@/errors';
 import * as repositoryTicket from '@/repositories/tickets-repository';
 import * as repositoryPayment from '@/repositories/payments-repository';
